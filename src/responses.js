@@ -1,5 +1,5 @@
 // data object
-const users = {};
+const users = { test: { badge: { frame: 'un', color: 'red' } } };
 
 // responds with a json object
 const respondJSON = (request, response, status, object) => {
@@ -19,10 +19,12 @@ const respondJSONMeta = (request, response, status) => {
 };
 
 // returns user as json objects
-const getUsers = (request, response) => {
+const getUsers = (request, response, key) => {
+  const obj = users.test;
+
   // makes a json object with the users data
   const responseJSON = {
-    users,
+    badge: obj,
   };
     // responds with it
   respondJSON(request, response, 200, responseJSON);
@@ -35,9 +37,9 @@ const getUsersMeta = (request, response) => {
 };
 
 // adds a user to the users data
-const addUser = (request, response, body) => {
+const addBadge = (request, response, body) => {
   const responseJSON = {
-    message: 'Name and age are both required.',
+    message: 'All parameters are required.',
   };
 
   // if the needed params are not send tell the user
@@ -85,7 +87,7 @@ const getNotFoundMeta = (request, response) => {
 // export methods
 module.exports = {
   getUsers,
-  addUser,
+  addBadge,
   getNotFound,
   getUsersMeta,
   getNotFoundMeta,

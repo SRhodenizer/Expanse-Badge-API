@@ -7,6 +7,7 @@ const query = require('querystring');
 // pull in the response finals
 const htmlHandler = require('./htmlResponses.js');
 const jsonHandler = require('./responses.js');
+const mediaHandler = require('./mediaResponses.js');
 
 // sets up the port for the server
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
@@ -14,25 +15,57 @@ const port = process.env.PORT || process.env.NODE_PORT || 3000;
 // handle GET requests
 const handleGet = (request, response, parsedUrl, method) => {
   // route to correct method based on url
+
+    //link to style sheet
   if (parsedUrl.pathname === '/style.css') {
     htmlHandler.getCSS(request, response);
   } else
+      //link to index page
   if (parsedUrl.pathname === '/') {
     htmlHandler.getIndex(request, response);
   } else
+      //gets a character id from the data object based on a name key
   if (parsedUrl.pathname === '/getUsers') {
-    if (method === 'GET') {
-      jsonHandler.getUsers(request, response);
-    } else {
-      jsonHandler.getUsersMeta(request, response);
+      // make the response accessible
+      const res = response;
+
+      // make a body array
+      const body = [];
+
+      // errors on bad request
+      request.on('error', (err) => {
+        console.dir(err);
+        res.statusCode = 400;
+        res.end();
+      });
+
+      // adds data bytes to body array
+      request.on('data', (chunk) => {
+        body.push(chunk);
+      });
+
+      // when the upload stream ends
+      request.on('end', () => {
+        // take all the data in the byte array and makes it a string
+        const bodyString = Buffer.concat(body).toString();
+        // parses the string into objects by field name
+        const bodyParams = query.parse(bodyString);
+        // passes to addUser function
+
+        jsonHandler.getUsers(request, response, bodyParams);
+      });
     }
-  } else
-  if (parsedUrl.pathname === '/notReal') {
-    if (method === 'GET') {
-      jsonHandler.getNotFound(request, response);
-    } else {
-      jsonHandler.getNotFoundMeta(request, response);
-    }
+   else if (parsedUrl.pathname === '/media/mcrn.png') {
+      mediaHandler.getMcrn(request, response);
+   }else if (parsedUrl.pathname === '/media/un.png') {
+      mediaHandler.getUn(request, response);
+   }else if (parsedUrl.pathname === '/media/sh.png') {
+      mediaHandler.getSh(request, response);
+   }else if (parsedUrl.pathname === '/media/opa.png') {
+      mediaHandler.getOpa(request, response);
+   }else if (parsedUrl.pathname === '/media/protogen.png') {
+      mediaHandler.getProto(request, response);
+      //404 default case 
   } else {
     jsonHandler.getNotFound(request, response);
   }
@@ -40,7 +73,7 @@ const handleGet = (request, response, parsedUrl, method) => {
 
 const handlePost = (request, response, parsedUrl) => {
   // if the post call is addUser
-  if (parsedUrl.path === '/addUser') {
+  if (parsedUrl.path === '/addBadge') {
     // make the response accessible
     const res = response;
 
@@ -66,7 +99,7 @@ const handlePost = (request, response, parsedUrl) => {
       // parses the string into objects by field name
       const bodyParams = query.parse(bodyString);
       // passes to addUser function
-      jsonHandler.addUser(request, res, bodyParams);
+      jsonHandler.addBadge(request, res, bodyParams);
     });
   }
 };
