@@ -71,6 +71,8 @@ const parseResponse = (xhr,content) =>{
       //grab the form's name and age fields so we can check user input
       const name = document.querySelector('#nameField');
       const age = document.querySelector('#ageField');
+      const sex = document.querySelector('#sexSelect').value;
+      const faction = document.querySelector('#factionSelect').value;
       
       //create a new Ajax request (remember this is asynchronous)
       const xhr = new XMLHttpRequest();
@@ -86,8 +88,8 @@ const parseResponse = (xhr,content) =>{
       xhr.onload = () => handleResponse(xhr,true);
         
       //takes the formdata and sends it as query
-      const formData = `name=${nameField.value}&age=${ageField.value}`;
-      
+      const formData = `name=${nameField.value}&age=${ageField.value}&sex=${sex}&faction=${faction}`;
+        
       //send our request with the data
       xhr.send(formData);
     
@@ -103,30 +105,29 @@ const parseResponse = (xhr,content) =>{
       
       //grab the forms action (url to go to)
       //and method (HTTP method - POST in this case)
-      const action = form.getAttribute('action');
+      let action = form.getAttribute('action');
       const method = form.getAttribute('method');
       
       //create a new Ajax request (remember this is asynchronous)
       const xhr = new XMLHttpRequest();
+        
+       const preMade = document.querySelector("#Premade");
+      //takes the formdata and sends it as query
+       action += `?key=${preMade.value}`;
+        
       //set the method and url (action field from form)
-      xhr.open(method, action);
+      xhr.open(method, action, true);
       
       //set our requested response type in hopes of a JSON response
-      xhr.setRequestHeader ('Accept', 'application/json');
+      xhr.setRequestHeader ('Accept', ',application/json');
       
-        console.log(method);
      if(method === 'get'){     
           //set our function to handle the response
           xhr.onload = () => handleResponse(xhr,true);
      }else{
          xhr.onload = () => handleResponse(xhr,false);
      }
-        
-       const preMade = document.querySelector("#Premade");
-      
-      //takes the formdata and sends it as query
-      const formData = `key=${preMade.value}`;
-        
+
       //send our request with the data
       xhr.send();
     
@@ -136,12 +137,109 @@ const parseResponse = (xhr,content) =>{
 
 //takes the parsed data and updates the canvas
 const updateCanvas = (obj, ctx, canvas) =>{
-    ctx.fillStyle = obj.badge.color;
+    const badge = obj.badge;
+    //paints a new background over old content
+    ctx.fillStyle = 'white';
     ctx.fillRect(0,0,canvas.width,canvas.height);
-        const frame = new Image();
-        frame.src = `/media/${obj.badge.frame}.png`;
-        console.log(frame);
-        ctx.drawImage(frame,0,0,canvas.width,canvas.height);
+    
+    //the x and y coordinates for the text fields
+    let x;
+    let y;
+    let x2;
+    let y2;
+    let x3;
+    let y3;
+    
+    //the x and y coordinates for the face image
+    let faceX;
+    let faceY;
+    
+    //depending on the frame sets up the position and the color of the text drawn
+   switch (badge.frame){
+       case 'mcrn':
+           ctx.fillStyle = 'red';
+           ctx.strokeStyle = 'black';
+           ctx.font ='30px Consolas';
+           x= 360;
+           y= 140;
+           x2= x;
+           y2= y+150;
+           x3= x;
+           y3=y+200;
+           faceX = 70;
+           faceY = 160;
+           break;
+       case 'un':
+           ctx.fillStyle = 'aqua';
+           ctx.strokeStyle = 'blue';
+           ctx.font ='24px Consolas';
+           x= 75;
+           y= 250;
+           x2= x+50;
+           y2= y+100;
+           x3= x+50;
+           y3=y+150;
+           faceX = 375;
+           faceY = 70;
+           break;
+       case 'protogen':
+           ctx.fillStyle = 'green';
+           ctx.strokeStyle = 'darkGrey';
+           ctx.font ='30px Consolas';
+           x= 50;
+           y= 170;
+           x2= x+75;
+           y2= y+100;
+           x3= x+75;
+           y3=y+150;
+           faceX = 370;
+           faceY = 216;
+           break;
+       case 'opa':
+           ctx.fillStyle = 'black';
+           ctx.strokeStyle = 'white';
+           ctx.font ='30px Consolas';
+           x= 50;
+           y= 300;
+           x2= x+40;
+           y2= y+75;
+           x3= x+40;
+           y3=y+125;
+           faceX = 370;
+           faceY = 62;
+           break;
+       case 'sh':
+           ctx.fillStyle = 'lightGrey';
+           ctx.strokeStyle = 'blue';
+           ctx.font ='30px Consolas';
+           x= 60;
+           y= 230;
+           x2= x+30;
+           y2= y+170;
+           x3= x+30;
+           y3=y+210;
+           faceX = 350;
+           faceY = 139;
+           break;
+   }
+    
+    //draws the face image under the frame
+    const face = new Image();
+    face.src = badge.image;
+    ctx.drawImage(face,faceX,faceY,250,225);
+    
+    //gets the frame image and draws it
+    const frame = new Image();
+    frame.src = `/media/${badge.frame}.png`;
+    ctx.drawImage(frame,0,0,canvas.width,canvas.height);
+    
+    //draws the text
+    ctx.fillText(`Name: ${badge.name}`,x,y,280);
+    ctx.strokeText(`Name: ${badge.name}`,x,y,280);
+    ctx.fillText(`Age: ${badge.age}`,x2,y2);
+    ctx.strokeText(`Age: ${badge.age}`,x2,y2);
+    ctx.fillText(`Sex: ${badge.sex}`,x3,y3);
+    ctx.strokeText(`Sex: ${badge.sex}`,x3,y3);
 };
 
     const init = () => {
@@ -186,7 +284,7 @@ const updateCanvas = (obj, ctx, canvas) =>{
         <h3>The Expanse Badge Maker</h3>
         <canvas id="preview" width="700" height="500"></canvas>
         <div id="controls">
-            <form id="nameForm" action="/addUser" method="post">
+            <form id="nameForm" action="/addBadge" method="post">
                 <label for="name">Name: </label>
                 <input id="nameField" type="text" name="name" />
                 <label for="age">Age: </label>
@@ -200,7 +298,7 @@ const updateCanvas = (obj, ctx, canvas) =>{
                     <option value="SH">Star Helix</option>
                 </select>
                 <label>Sex:</label>
-                <select id="factionSelect">
+                <select id="sexSelect">
                     <option value="F">Female</option>
                     <option value="M">Male</option>
                 </select>
@@ -208,10 +306,11 @@ const updateCanvas = (obj, ctx, canvas) =>{
             </form>
             <form id="userForm" action="/getUsers" method="get">
                 <select id='Premade'>
-                    <option value='test'>James Holden</option>
+                    <option value='James Holden'>James Holden</option>
                     <option value='Naomi Nagata'>Naomi Nagata</option>
                     <option value='Alex Kamal'>Alex Kamal</option>
                     <option value='Amos Burton'>Amos Burton</option>
+                    <option value='Josephus Miller'>Josephus Miller</option>
                 </select>
                 <select id="methodSelect">
                     <option value="get">GET</option>
@@ -226,6 +325,12 @@ const updateCanvas = (obj, ctx, canvas) =>{
         <image src='media/opa.png' style="display:none;" />
         <image src='media/sh.png' style="display:none;" />
         <image src='media/protogen.png' style="display:none;" />
+        
+        <image src='media/alexFace.jpg' style="display:none;" />
+        <image src='media/jamesFace.jpg' style="display:none;" />
+        <image src='media/naomiFace.jpg' style="display:none;" />
+        <image src='media/amosFace.jpg' style="display:none;" />
+        <image src='media/millerFace.jpg' style="display:none;" />
     </section>
     <section id="content">
     </section>
