@@ -24,7 +24,7 @@ const handleGet = (request, response, parsedUrl, queryParam) => {
   } else
   // gets a character id from the data object based on a name key
   if (parsedUrl.pathname === '/getUsers') {
-    console.log(queryParam);
+    //console.log(queryParam);
     jsonHandler.getUsers(request, response, queryParam);
   } else
   // cases for getting all the images from the media folder
@@ -82,7 +82,7 @@ const handlePost = (request, response, parsedUrl) => {
       // parses the string into objects by field name
       const bodyParams = query.parse(bodyString);
       // passes to addUser function
-      console.log(bodyParams);
+      //console.log(bodyParams);
       jsonHandler.addBadge(request, res, bodyParams);
     });
   }

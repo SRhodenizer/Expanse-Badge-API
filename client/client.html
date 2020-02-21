@@ -21,12 +21,11 @@ const parseResponse = (xhr,content) =>{
          content.appendChild(p);
      }
     
-    
     if(obj.badge){
         //grabs the canvas elements
       const canvas = document.querySelector('canvas');
       const drawCtx = canvas.getContext("2d");
-        updateCanvas(obj.badge, drawCtx, canvas);
+      updateCanvas(obj.badge, drawCtx, canvas);
     }
 };
 
@@ -88,7 +87,7 @@ const parseResponse = (xhr,content) =>{
       xhr.onload = () => handleResponse(xhr,true);
         
       //takes the formdata and sends it as query
-      const formData = `name=${nameField.value}&age=${ageField.value}&sex=${sex}&faction=${faction}`;
+      const formData = `name=${nameField.value}&age=${ageField.value}&sex=${sex}&frame=${faction}`;
         
       //send our request with the data
       xhr.send(formData);
@@ -112,8 +111,13 @@ const parseResponse = (xhr,content) =>{
       const xhr = new XMLHttpRequest();
         
        const preMade = document.querySelector("#Premade");
+        const customName = document.querySelector("#getName")
       //takes the formdata and sends it as query
-       action += `?key=${preMade.value}`;
+        if(preMade.value != 'custom'){
+            action += `?key=${preMade.value}`;
+        }else if(preMade.value === 'custom'){
+            action += `?key=${customName.value}`
+        }
         
       //set the method and url (action field from form)
       xhr.open(method, action, true);
@@ -138,6 +142,7 @@ const parseResponse = (xhr,content) =>{
 //takes the parsed data and updates the canvas
 const updateCanvas = (obj, ctx, canvas) =>{
     const badge = obj.badge;
+    console.dir(badge);
     //paints a new background over old content
     ctx.fillStyle = 'white';
     ctx.fillRect(0,0,canvas.width,canvas.height);
@@ -311,7 +316,10 @@ const updateCanvas = (obj, ctx, canvas) =>{
                     <option value='Alex Kamal'>Alex Kamal</option>
                     <option value='Amos Burton'>Amos Burton</option>
                     <option value='Josephus Miller'>Josephus Miller</option>
+                    <option value='custom'>Select by Text Entry</option>
                 </select>
+                <label for="name">Get User Named: </label>
+                <input id="getName" type="text" name="name2" />
                 <select id="methodSelect">
                     <option value="get">GET</option>
                     <option value="head">HEAD</option>
@@ -325,7 +333,7 @@ const updateCanvas = (obj, ctx, canvas) =>{
         <image src='media/opa.png' style="display:none;" />
         <image src='media/sh.png' style="display:none;" />
         <image src='media/protogen.png' style="display:none;" />
-        
+
         <image src='media/alexFace.jpg' style="display:none;" />
         <image src='media/jamesFace.jpg' style="display:none;" />
         <image src='media/naomiFace.jpg' style="display:none;" />

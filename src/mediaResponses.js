@@ -85,6 +85,8 @@ const getOpa = (request, response) => {
 const getProto = (request, response) => {
   loadFile(request, response, '../media/protogen.png', 'image/apng');
 };
+
+
 const getJamesFace = (request, response) => {
   loadFile(request, response, '../media/jamesFace.jpeg', 'image/jpg');
 };
