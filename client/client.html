@@ -256,8 +256,15 @@ const updateCanvas = (obj, ctx, canvas) =>{
         //fields for get request updates
       const preMade = document.querySelector('#Premade');
       const methodField = document.querySelector('#methodSelect');
-        //submit buttons 
+      const nameField = document.querySelector('#nameField');
+      const ageField = document.querySelector('#ageField');
+      const imageField = document.querySelector('#imageField');
+      const sexSelect = document.querySelector('#sexSelect');
+      const factionSelector = document.querySelector('#factionSelect');
+      
+      //submit buttons 
       const getButton = document.querySelector('#getButton');
+      const updateButton = document.querySelector('#updateButton');
       const downloadButton = document.querySelector('#download');
         
         //grabs the canvas elements
@@ -273,13 +280,20 @@ const updateCanvas = (obj, ctx, canvas) =>{
       const getImage = (e)=> getImgurImage(imageField.vlaue);
       //const updatePreMade = (e) => userForm.setAttribute('action',preMade.value);
       const updateMethod = (e) => userForm.setAttribute('method',methodField.value);
+      const previewBadge = (e) => updateCanvas({badge:{
+          frame : factionSelector.value.toLowerCase(), 
+          name : nameField.value,
+          age : ageField.value,
+          sex : sexSelect.value.toLowerCase(),
+          image : imageField.value
+      }}, drawCtx, canvas);
         
       //attach submit event (for clicking submit or hitting enter)
       getButton.addEventListener('click', getUsers);
       nameForm.addEventListener('submit', addUser);
       //preMade.addEventListener('change',updatePreMade);
       methodField.addEventListener('change',updateMethod);
-        
+      updateButton.addEventListener('click',previewBadge);
         //function to download the image off of canavs on a button
       downloadButton.addEventListener('click', function (e){
           let dataUrl = canvas.toDataURL('image/png');
@@ -324,6 +338,7 @@ const updateCanvas = (obj, ctx, canvas) =>{
                     <label>Face Image Link: </label>
                     <input id="imageField" type="text" name="image" />
                     <p></p>
+                    <input id="updateButton" type="submit" value="Preview Badge" />
                     <input id="addButton" type="submit" value="Add User" />
                 </form>
                 <p></p>
