@@ -12,7 +12,7 @@
 const parseResponse = (xhr,content) =>{
      //parse response (obj will be empty in a 204 updated)
      const obj = JSON.parse(xhr.response);
-     console.dir(obj);
+     //console.dir(obj);
  
      //if message in response, add to screen
      if(obj.message){
@@ -72,6 +72,7 @@ const parseResponse = (xhr,content) =>{
       const age = document.querySelector('#ageField');
       const sex = document.querySelector('#sexSelect').value;
       const faction = document.querySelector('#factionSelect').value;
+      const faceImage = document.querySelector('#imageField').value;
       
       //create a new Ajax request (remember this is asynchronous)
       const xhr = new XMLHttpRequest();
@@ -87,7 +88,7 @@ const parseResponse = (xhr,content) =>{
       xhr.onload = () => handleResponse(xhr,true);
         
       //takes the formdata and sends it as query
-      const formData = `name=${nameField.value}&age=${ageField.value}&sex=${sex}&frame=${faction}`;
+      const formData = `name=${nameField.value}&age=${ageField.value}&sex=${sex}&frame=${faction}&image=${faceImage}`;
         
       //send our request with the data
       xhr.send(formData);
@@ -142,7 +143,7 @@ const parseResponse = (xhr,content) =>{
 //takes the parsed data and updates the canvas
 const updateCanvas = (obj, ctx, canvas) =>{
     const badge = obj.badge;
-    console.dir(badge);
+    //console.dir(badge);
     //paints a new background over old content
     ctx.fillStyle = 'white';
     ctx.fillRect(0,0,canvas.width,canvas.height);
@@ -257,6 +258,7 @@ const updateCanvas = (obj, ctx, canvas) =>{
       const methodField = document.querySelector('#methodSelect');
         //submit buttons 
       const getButton = document.querySelector('#getButton');
+      const downloadButton = document.querySelector('#download');
         
         //grabs the canvas elements
       const canvas = document.querySelector('canvas');
@@ -268,6 +270,7 @@ const updateCanvas = (obj, ctx, canvas) =>{
       //create handlers 
       const getUsers = (e) => sendGet(e, userForm);
       const addUser = (e) => sendPost(e,nameForm);
+      const getImage = (e)=> getImgurImage(imageField.vlaue);
       //const updatePreMade = (e) => userForm.setAttribute('action',preMade.value);
       const updateMethod = (e) => userForm.setAttribute('method',methodField.value);
         
@@ -276,6 +279,12 @@ const updateCanvas = (obj, ctx, canvas) =>{
       nameForm.addEventListener('submit', addUser);
       //preMade.addEventListener('change',updatePreMade);
       methodField.addEventListener('change',updateMethod);
+        
+        //function to download the image off of canavs on a button
+      downloadButton.addEventListener('click', function (e){
+          let dataUrl = canvas.toDataURL('image/png');
+          downloadButton.href=dataUrl;
+      });
     };
 
     window.onload = init;
@@ -286,46 +295,66 @@ const updateCanvas = (obj, ctx, canvas) =>{
 
 <body>
     <section id="top">
-        <h3>The Expanse Badge Maker</h3>
+        <h2>The Expanse Badge Maker</h2>
         <canvas id="preview" width="700" height="500"></canvas>
         <div id="controls">
-            <form id="nameForm" action="/addBadge" method="post">
-                <label for="name">Name: </label>
-                <input id="nameField" type="text" name="name" />
-                <label for="age">Age: </label>
-                <input id="ageField" type="number" name="age" min="0" max="100" step="1" />
-                <label>Faction:</label>
-                <select id="factionSelect">
-                    <option value="UN">United Nations</option>
-                    <option value="MCRN">Martian Congressional Republic Navy</option>
-                    <option value="OPA">Outer Planet Alliance</option>
-                    <option value="Protogen">Protogen Corporation</option>
-                    <option value="SH">Star Helix</option>
-                </select>
-                <label>Sex:</label>
-                <select id="sexSelect">
-                    <option value="F">Female</option>
-                    <option value="M">Male</option>
-                </select>
-                <input id="addButton" type="submit" value="Add User" />
-            </form>
-            <form id="userForm" action="/getUsers" method="get">
-                <select id='Premade'>
-                    <option value='James Holden'>James Holden</option>
-                    <option value='Naomi Nagata'>Naomi Nagata</option>
-                    <option value='Alex Kamal'>Alex Kamal</option>
-                    <option value='Amos Burton'>Amos Burton</option>
-                    <option value='Josephus Miller'>Josephus Miller</option>
-                    <option value='custom'>Select by Text Entry</option>
-                </select>
-                <label for="name">Get User Named: </label>
-                <input id="getName" type="text" name="name2" />
-                <select id="methodSelect">
-                    <option value="get">GET</option>
-                    <option value="head">HEAD</option>
-                </select>
-                <input id="getButton" type="submit" value="Get User" />
-            </form>
+            <div id="postControls">
+                <h4>Create Your Badge</h4>
+                <form id="nameForm" action="/addBadge" method="post">
+                    <label for="name">Name: </label>
+                    <input id="nameField" type="text" name="name" />
+                    <label for="age">Age: </label>
+                    <input id="ageField" type="number" name="age" min="0" max="100" step="1" />
+                    <p></p>
+                    <label>Faction:</label>
+                    <select id="factionSelect">
+                        <option value="UN">United Nations</option>
+                        <option value="MCRN">Martian Congressional Republic Navy</option>
+                        <option value="OPA">Outer Planet Alliance</option>
+                        <option value="Protogen">Protogen Corporation</option>
+                        <option value="SH">Star Helix</option>
+                    </select>
+                    <p></p>
+                    <label>Sex:</label>
+                    <select id="sexSelect">
+                        <option value="M">Male</option>
+                        <option value="F">Female</option>
+                    </select>
+                    <p></p>
+                    <label>Face Image Link: </label>
+                    <input id="imageField" type="text" name="image" />
+                    <p></p>
+                    <input id="addButton" type="submit" value="Add User" />
+                </form>
+                <p></p>
+            </div>
+            <div id="getControls">
+                <h4>Get Premade Badges</h4>
+                <form id="userForm" action="/getUsers" method="get">
+                    <select id='Premade'>
+                        <option value='James Holden'>James Holden</option>
+                        <option value='Naomi Nagata'>Naomi Nagata</option>
+                        <option value='Alex Kamal'>Alex Kamal</option>
+                        <option value='Amos Burton'>Amos Burton</option>
+                        <option value='Josephus Miller'>Josephus Miller</option>
+                        <option value='custom'>Select by Text Entry</option>
+                    </select>
+                    <p></p>
+                    <label for="name">Get User Named: </label>
+                    <input id="getName" type="text" name="name2" />
+                    <p></p>
+                    <label>Use a GET or HEAD Request: </label>
+                    <select id="methodSelect">
+                        <option value="get">GET</option>
+                        <option value="head">HEAD</option>
+                    </select>
+                    <p></p>
+                    <input id="getButton" type="submit" value="Get User" />
+                    <p></p>
+                    <a href='#' class="button" id="download" download="badge.png">Download</a>
+                </form>
+                <p></p>
+            </div>
         </div>
         <!-- Hidden Images for Displaying the Badge Frames in Canvas -->
         <image src='media/mcrn.png' style="display:none;" />

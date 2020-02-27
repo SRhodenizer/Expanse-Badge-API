@@ -103,6 +103,10 @@ const getMillerFace = (request, response) => {
   loadFile(request, response, '../media/millerFace.jpg', 'image/jpg');
 };
 
+const getSpace = (request, response) =>{
+  loadFile(request, response, '../media/space.jpg','image/jpg');  
+};
+
 module.exports = {
   getMcrn,
   getUn,
@@ -114,4 +118,6 @@ module.exports = {
   getAmosFace,
   getAlexFace,
   getMillerFace,
+  getSpace,
+    
 };

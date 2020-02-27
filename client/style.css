@@ -1,8 +1,21 @@
+@font-face{
+    font-family: 'Moonhouse';
+    src: url '../font/Moonhouse-yE5M.ttf';
+    font-weight: normal;
+    font-style: normal;        
+}
+
 html, body {
   height: 100%;
   width: 100%;
   margin: 0;
   padding: 0;
+  color: white;
+  background-image: url('/media/space.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+    
+  font-family: 'Moonhouse';
 }
 
 #top {
@@ -18,4 +31,29 @@ html, body {
   margin-top: 100px;
   font-size: 2em;
   text-align: center;
+}
+.button{
+    background-color: azure;
+    border: 2px solid azure;
+    border-radius: 5px;
+    color: black;
+    text-decoration: none;
+}
+#getControls{
+    width: 30%;
+    position: absolute;
+    left: 52%;
+    top: 80%;
+    background-color: black;
+    border-radius: 5px;
+    border: 3px solid white; 
+}
+#postControls{
+    width: 30%;
+    position: absolute;
+    left: 20%;
+    top:  80%;
+    background-color: black;
+    border-radius: 5px;
+    border: 3px solid white; 
 }
