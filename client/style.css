@@ -1,6 +1,6 @@
 @font-face{
     font-family: 'Moonhouse';
-    src: url '../font/Moonhouse-yE5M.ttf';
+    src: url('/font/Moonhouse-yE5M.ttf');
     font-weight: normal;
     font-style: normal;        
 }
