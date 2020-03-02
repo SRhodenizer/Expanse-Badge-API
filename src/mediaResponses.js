@@ -3,121 +3,126 @@ const path = require('path');
 
 
 const loadFile = (request, response, filePath, contentType) => {
-  // get file path to the mp4
-  const file = path.resolve(__dirname, filePath);
+    // get file path to the mp4
+    const file = path.resolve(__dirname, filePath);
 
 
-  fs.stat(file, (err, stats) => {
-    // 404 error head
-    if (err) {
-      if (err.code === 'ENOENT') {
-        response.writeHead(404);
-      }
-      return response.end(err);
-    }
+    fs.stat(file, (err, stats) => {
+        // 404 error head
+        if (err) {
+            if (err.code === 'ENOENT') {
+                response.writeHead(404);
+            }
+            return response.end(err);
+        }
 
-    // byte range from request headers
-    let {
-      range,
-    } = request.headers;
+        // byte range from request headers
+        let {
+            range,
+        } = request.headers;
 
-    // if there is no range, set up the start with an unknown end range
-    if (!range) {
-      range = 'bytes=0-';
-    }
+        // if there is no range, set up the start with an unknown end range
+        if (!range) {
+            range = 'bytes=0-';
+        }
 
-    // converts the byte string into an array of strings
-    const positions = range.replace(/bytes=/, '').split('-');
-    // sets the first string in the array to a num in base 10
-    let start = parseInt(positions[0], 10);
+        // converts the byte string into an array of strings
+        const positions = range.replace(/bytes=/, '').split('-');
+        // sets the first string in the array to a num in base 10
+        let start = parseInt(positions[0], 10);
 
-    // gives the total file size in bytes
-    const total = stats.size;
-    const end = positions[1] ? parseInt(positions[1], 10) : total - 1;
+        // gives the total file size in bytes
+        const total = stats.size;
+        const end = positions[1] ? parseInt(positions[1], 10) : total - 1;
 
-    if (start > end) {
-      start = end - 1;
-    }
+        if (start > end) {
+            start = end - 1;
+        }
 
-    // gets the chunk size of the file being sent to the client
-    const chunksize = (end - start) + 1;
+        // gets the chunk size of the file being sent to the client
+        const chunksize = (end - start) + 1;
 
-    // writes the 206 success code, with info on the file being sent
-    response.writeHead(206, {
-      'Content-Range': `bytes ${start}-${end}/${total}`,
-      'Accept-Ranges': 'bytes',
-      'Content-Length': chunksize,
-      'Content-Type': contentType,
+        // writes the 206 success code, with info on the file being sent
+        response.writeHead(206, {
+            'Content-Range': `bytes ${start}-${end}/${total}`,
+            'Accept-Ranges': 'bytes',
+            'Content-Length': chunksize,
+            'Content-Type': contentType,
+        });
+
+        // create a file stream to send the media file
+        const stream = fs.createReadStream(file, {
+            start,
+            end,
+        });
+
+        // maintains file stream as long as bytes can still be sent
+        stream.on('open', () => {
+            stream.pipe(response);
+        });
+
+        // stops the stream if errors
+        stream.on('error', (streamErr) => {
+            response.end(streamErr);
+        });
+
+        return stream;
     });
-
-    // create a file stream to send the media file
-    const stream = fs.createReadStream(file, {
-      start,
-      end,
-    });
-
-    // maintains file stream as long as bytes can still be sent
-    stream.on('open', () => {
-      stream.pipe(response);
-    });
-
-    // stops the stream if errors
-    stream.on('error', (streamErr) => {
-      response.end(streamErr);
-    });
-
-    return stream;
-  });
 };
 
 const getMcrn = (request, response) => {
-  loadFile(request, response, '../media/mcrn.png', 'image/apng');
+    loadFile(request, response, '../media/mcrn.png', 'image/apng');
 };
 const getUn = (request, response) => {
-  loadFile(request, response, '../media/un.png', 'image/apng');
+    loadFile(request, response, '../media/un.png', 'image/apng');
 };
 const getSh = (request, response) => {
-  loadFile(request, response, '../media/sh.png', 'image/apng');
+    loadFile(request, response, '../media/sh.png', 'image/apng');
 };
 const getOpa = (request, response) => {
-  loadFile(request, response, '../media/opa.png', 'image/apng');
+    loadFile(request, response, '../media/opa.png', 'image/apng');
 };
 const getProto = (request, response) => {
-  loadFile(request, response, '../media/protogen.png', 'image/apng');
+    loadFile(request, response, '../media/protogen.png', 'image/apng');
 };
 
 
 const getJamesFace = (request, response) => {
-  loadFile(request, response, '../media/jamesFace.jpeg', 'image/jpg');
+    loadFile(request, response, '../media/jamesFace.jpeg', 'image/jpg');
 };
 const getNaomiFace = (request, response) => {
-  loadFile(request, response, '../media/naomiFace.jpg', 'image/jpg');
+    loadFile(request, response, '../media/naomiFace.jpg', 'image/jpg');
 };
 const getAmosFace = (request, response) => {
-  loadFile(request, response, '../media/amosFace.jpg', 'image/jpg');
+    loadFile(request, response, '../media/amosFace.jpg', 'image/jpg');
 };
 const getAlexFace = (request, response) => {
-  loadFile(request, response, '../media/alexFace.jpg', 'image/jpg');
+    loadFile(request, response, '../media/alexFace.jpg', 'image/jpg');
 };
 const getMillerFace = (request, response) => {
-  loadFile(request, response, '../media/millerFace.jpg', 'image/jpg');
+    loadFile(request, response, '../media/millerFace.jpg', 'image/jpg');
 };
 
-const getSpace = (request, response) =>{
-  loadFile(request, response, '../media/space.jpg','image/jpg');  
+const getSpace = (request, response) => {
+    loadFile(request, response, '../media/space.jpg', 'image/jpg');
+};
+
+const getBackground = (request, response) => {
+    loadFile(request, response, '../media/expanse10.jpg', 'image/jpg');
 };
 
 module.exports = {
-  getMcrn,
-  getUn,
-  getSh,
-  getOpa,
-  getProto,
-  getJamesFace,
-  getNaomiFace,
-  getAmosFace,
-  getAlexFace,
-  getMillerFace,
-  getSpace,
-    
+    getMcrn,
+    getUn,
+    getSh,
+    getOpa,
+    getProto,
+    getJamesFace,
+    getNaomiFace,
+    getAmosFace,
+    getAlexFace,
+    getMillerFace,
+    getSpace,
+    getBackground,
+
 };

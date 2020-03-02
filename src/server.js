@@ -49,7 +49,9 @@ const handleGet = (request, response, parsedUrl, queryParam) => {
   } else if (parsedUrl.pathname === '/media/millerFace.jpg') {
     mediaHandler.getMillerFace(request, response);
   } else if (parsedUrl.pathname === '/media/space.jpg') {
-    mediaHandler.getSpace(request, response);
+    mediaHandler.getSpace(request, response); 
+  } else if (parsedUrl.pathname === '/media/expanse10.jpg') {
+    mediaHandler.getBackground(request, response);
     // 404 default case
   } else {
     jsonHandler.getNotFound(request, response);

@@ -1,59 +1,98 @@
-@font-face{
-    font-family: 'Moonhouse';
-    src: url('/font/Moonhouse-yE5M.ttf');
-    font-weight: normal;
-    font-style: normal;        
-}
+html,
+body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    color: white;
+    background-image: url('/media/space.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
 
-html, body {
-  height: 100%;
-  width: 100%;
-  margin: 0;
-  padding: 0;
-  color: white;
-  background-image: url('/media/space.jpg');
-  background-repeat: no-repeat;
-  background-size: cover;
-    
-  font-family: 'Moonhouse';
+    font-family: 'Courier';
 }
 
 #top {
-  text-align: center;
-  margin: 0 auto;
+    text-align: center;
+    margin: 0 auto;
 }
 
 #top h1 {
-  font-size: 2em;
+    font-size: 2em;
+}
+
+h2 {
+    color: gold;
+    background-color: black;
+    border: 5px solid gold;
+    padding: 5px;
+    border-radius: 3px;
+    
 }
 
 #content {
-  margin-top: 100px;
-  font-size: 2em;
-  text-align: center;
+    margin-top: 100px;
+    font-size: 2em;
+    text-align: center;
 }
-.button{
-    background-color: azure;
-    border: 2px solid azure;
+
+.button {
+    background-color: black;
+    border: 1px solid gold;
     border-radius: 5px;
-    color: black;
+    color: white;
     text-decoration: none;
 }
-#getControls{
+
+#controls {
+    background-image: url('/media/expanse10.jpg');
+    color: gold;
+}
+
+#getControls {
     width: 30%;
     position: absolute;
     left: 52%;
     top: 80%;
     background-color: black;
     border-radius: 5px;
-    border: 3px solid white; 
+    border: 3px solid gold;
 }
-#postControls{
+
+#postControls {
     width: 30%;
     position: absolute;
     left: 20%;
-    top:  80%;
+    top: 80%;
     background-color: black;
     border-radius: 5px;
-    border: 3px solid white; 
+    border: 3px solid gold;
+}
+
+input[type=text] {
+    background-color: black;
+    border-color: gold;
+    color: gold;
+}
+
+input[type=number] {
+    background-color: black;
+    border-color: gold;
+    color: gold;
+}
+
+input[type=submit] {
+    background-color: black;
+    border-color: gold;
+    color: white;
+}
+
+select {
+    background-color: black;
+    border-color: gold;
+    color: gold;
+}
+
+h4{
+    color: white;
 }

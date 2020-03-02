@@ -12,7 +12,7 @@
 const parseResponse = (xhr,content) =>{
      //parse response (obj will be empty in a 204 updated)
      const obj = JSON.parse(xhr.response);
-     //console.dir(obj);
+     console.dir(obj);
  
      //if message in response, add to screen
      if(obj.message){
@@ -32,25 +32,25 @@ const parseResponse = (xhr,content) =>{
 //function to handle our response
     const handleResponse = (xhr, parse) => {
       const content = document.querySelector('#content');
-    
-      //check the status code
-      switch(xhr.status) {
-        case 200: //success
-          content.innerHTML = `<b>Success</b>`;
-          break;
-        case 201://created
-         content.innerHTML = `<b>Create</b>`;
-         break;
-       case 204://updated
-           content.innerHTML = `<b>Updated (No Content)</b>`;
-           break;
-       case 400://bad request
-           content.innerHTML = `<b>Bad Request</b>`;
-           break;
-        default: //any other status code
-          content.innerHTML = `<b>Resource Not Found</b>`;
-          break;
-      }
+//    old code from the API assignment
+//      //check the status code
+//      switch(xhr.status) {
+//        case 200: //success
+//          content.innerHTML = `<b>Success</b>`;
+//          break;
+//        case 201://created
+//         content.innerHTML = `<b>Create</b>`;
+//         break;
+//       case 204://updated
+//           content.innerHTML = `<b>Updated (No Content)</b>`;
+//           break;
+//       case 400://bad request
+//           console.log("Bad Request - Parameters Required.")
+//           break;
+//        default: //any other status code
+//          content.innerHTML = `<b>Resource Not Found</b>`;
+//          break;
+//      }
         if(parse && xhr.status !== 204){     
             //parse response 
             parseResponse(xhr, content);
@@ -143,10 +143,13 @@ const parseResponse = (xhr,content) =>{
 //takes the parsed data and updates the canvas
 const updateCanvas = (obj, ctx, canvas) =>{
     const badge = obj.badge;
-    //console.dir(badge);
+    console.dir(badge);
     //paints a new background over old content
-    ctx.fillStyle = 'white';
+    ctx.fillStyle = 'black';
+    ctx.strokeStyle = 'gold';
+    ctx.lineWidth = 5;
     ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.strokeRect(0,0,canvas.width,canvas.height);
     
     //the x and y coordinates for the text fields
     let x;
@@ -160,6 +163,7 @@ const updateCanvas = (obj, ctx, canvas) =>{
     let faceX;
     let faceY;
     
+    ctx.lineWidth = 1;
     //depending on the frame sets up the position and the color of the text drawn
    switch (badge.frame){
        case 'mcrn':
@@ -255,7 +259,6 @@ const updateCanvas = (obj, ctx, canvas) =>{
       const userForm = document.querySelector('#userForm');
         //fields for get request updates
       const preMade = document.querySelector('#Premade');
-      const methodField = document.querySelector('#methodSelect');
       const nameField = document.querySelector('#nameField');
       const ageField = document.querySelector('#ageField');
       const imageField = document.querySelector('#imageField');
@@ -272,14 +275,16 @@ const updateCanvas = (obj, ctx, canvas) =>{
       const drawCtx = canvas.getContext("2d");
         //draws a default canavs to show where the previes window is 
       drawCtx.fillStyle = 'black';
+      drawCtx.strokeStyle = 'gold';
+      drawCtx.lineWidth = 5;
       drawCtx.fillRect(0,0,canvas.width,canvas.height);
+      drawCtx.strokeRect(0,0,canvas.width,canvas.height);
       
       //create handlers 
       const getUsers = (e) => sendGet(e, userForm);
       const addUser = (e) => sendPost(e,nameForm);
       const getImage = (e)=> getImgurImage(imageField.vlaue);
       //const updatePreMade = (e) => userForm.setAttribute('action',preMade.value);
-      const updateMethod = (e) => userForm.setAttribute('method',methodField.value);
       const previewBadge = (e) => updateCanvas({badge:{
           frame : factionSelector.value.toLowerCase(), 
           name : nameField.value,
@@ -292,7 +297,6 @@ const updateCanvas = (obj, ctx, canvas) =>{
       getButton.addEventListener('click', getUsers);
       nameForm.addEventListener('submit', addUser);
       //preMade.addEventListener('change',updatePreMade);
-      methodField.addEventListener('change',updateMethod);
       updateButton.addEventListener('click',previewBadge);
         //function to download the image off of canavs on a button
       downloadButton.addEventListener('click', function (e){
@@ -310,8 +314,9 @@ const updateCanvas = (obj, ctx, canvas) =>{
 <body>
     <section id="top">
         <h2>The Expanse Badge Maker</h2>
-        <canvas id="preview" width="700" height="500"></canvas>
+        
         <div id="controls">
+            <canvas id="preview" width="700" height="500"></canvas>
             <div id="postControls">
                 <h4>Create Your Badge</h4>
                 <form id="nameForm" action="/addBadge" method="post">
@@ -339,7 +344,7 @@ const updateCanvas = (obj, ctx, canvas) =>{
                     <input id="imageField" type="text" name="image" />
                     <p></p>
                     <input id="updateButton" type="submit" value="Preview Badge" />
-                    <input id="addButton" type="submit" value="Add User" />
+                    <input id="addButton" type="submit" value="Save Badge" />
                 </form>
                 <p></p>
             </div>
@@ -358,13 +363,9 @@ const updateCanvas = (obj, ctx, canvas) =>{
                     <label for="name">Get User Named: </label>
                     <input id="getName" type="text" name="name2" />
                     <p></p>
-                    <label>Use a GET or HEAD Request: </label>
-                    <select id="methodSelect">
-                        <option value="get">GET</option>
-                        <option value="head">HEAD</option>
-                    </select>
+                    <label></label>
                     <p></p>
-                    <input id="getButton" type="submit" value="Get User" />
+                    <input id="getButton" type="submit" value="Get Badge" />
                     <p></p>
                     <a href='#' class="button" id="download" download="badge.png">Download</a>
                 </form>
